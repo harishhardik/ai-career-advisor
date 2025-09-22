@@ -6,7 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "npm run dev",
+    "start:full": "concurrently \"npm run backend\" \"npm run dev\"",
+    "backend": "cd backend && npm start",
+    "install:all": "npm install && cd backend && npm install",
+    "clean": "rimraf node_modules dist && cd backend && rimraf node_modules",
+    "reset": "npm run clean && npm run install:all",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel"
   },
   "dependencies": {
     "@google/genai": "^1.20.0",
@@ -16,6 +24,8 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^8.2.2",
+    "rimraf": "^5.0.5",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

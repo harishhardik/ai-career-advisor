@@ -1,0 +1,24 @@
+/* Minimal global styles for AI Career Advisor */
+:root {
+  --bg: #f7fafc;
+  --text: #1f2937;
+}
+html, body, #root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+a { color: #4f46e5; }
+
+/* Utility to ensure the app container shows if JavaScript is disabled */
+#root:empty::before {
+  content: "JavaScript is required to run this application.";
+  display: block;
+  padding: 2rem;
+  text-align: center;
+  color: #9ca3af;
+}

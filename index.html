@@ -6,20 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Career Advisor</title>
     <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
-{
-  "imports": {
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0",
-    "react/": "https://aistudiocdn.com/react@^19.1.1/",
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/index.css">
 </head>
   <body class="bg-gray-100 dark:bg-gray-900">
     <div id="root"></div>
+    <script>
+      // Inline placeholder to avoid a completely blank page if the bundle fails.
+      (function(){
+        try {
+          var root = document.getElementById('root');
+          if (root && root.innerHTML.trim() === '') {
+            root.innerHTML = '<div style="padding:32px;text-align:center;color:#e6eef8"><h2 style="font-size:20px;margin-bottom:8px">Starting AI Career Advisor…</h2><p id="boot-msg" style="opacity:0.85">If this message stays, open the browser console (F12) to view errors.</p></div>';
+            console.log('Inline placeholder inserted into #root');
+          }
+        } catch (e) {
+          console.warn('Placeholder script error', e);
+        }
+      })();
+    </script>
     
     <!-- PDF.js for PDF parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -32,6 +36,6 @@
     <!-- Tesseract.js for OCR on images -->
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
 
-    <script type="module" src="/index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
   </body>
 </html>

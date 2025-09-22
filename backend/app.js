@@ -1,12 +1,8 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-
-const path = require('path');
-const fs = require('fs');
 
 const app = express();
 app.use(cors());
@@ -43,7 +39,6 @@ const protect = async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, JWT_SECRET);
-      
       // Find user in the in-memory array by string ID
       req.user = users.find(u => u._id === decoded.id);
       if (req.user) {
@@ -51,7 +46,6 @@ const protect = async (req, res, next) => {
       } else {
          res.status(401).json({ message: 'Not authorized, user not found' });
       }
-
     } catch (error) {
       res.status(401).json({ message: 'Not authorized, token failed' });
     }
@@ -61,18 +55,14 @@ const protect = async (req, res, next) => {
   }
 };
 
-
 // --- API Routes ---
 
-// @desc    Health check for the API
-// @route   GET /api/health
+// Health
 app.get('/api/health', (req, res) => {
   res.send('AI Career Advisor API is running (In-Memory Demo Mode)...');
 });
 
-
-// @desc    Handle contact form submission
-// @route   POST /api/contact
+// Contact
 app.post('/api/contact', (req, res) => {
     const { name, email, message } = req.body;
 
@@ -108,11 +98,7 @@ app.post('/api/contact', (req, res) => {
     });
 });
 
-
-// --- User Routes ---
-
-// @desc    Register a new user
-// @route   POST /api/users/signup
+// Users
 app.post('/api/users/signup', async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -124,7 +110,6 @@ app.post('/api/users/signup', async (req, res) => {
     return res.status(400).json({ message: 'User already exists' });
   }
   
-  // Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -153,8 +138,6 @@ app.post('/api/users/signup', async (req, res) => {
   }
 });
 
-// @desc    Authenticate user & get token
-// @route   POST /api/users/login
 app.post('/api/users/login', async (req, res) => {
   const { email, password } = req.body;
   const user = users.find(u => u.email === email);
@@ -173,13 +156,9 @@ app.post('/api/users/login', async (req, res) => {
   }
 });
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
 app.get('/api/users/profile', protect, async (req, res) => {
-  // req.user is attached by the 'protect' middleware
   const user = req.user;
   if (user) {
-    // Return user data without the password
     const { password, ...userProfile } = user;
     res.json(userProfile);
   } else {
@@ -187,44 +166,28 @@ app.get('/api/users/profile', protect, async (req, res) => {
   }
 });
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
 app.put('/api/users/profile', protect, async (req, res) => {
   const userIndex = users.findIndex(u => u._id === req.user._id);
 
   if (userIndex > -1) {
     const user = users[userIndex];
     user.name = req.body.name || user.name;
-    // Allow setting skills/goals to an empty string
     user.skills = req.body.skills !== undefined ? req.body.skills : user.skills;
     user.careerGoals = req.body.careerGoals !== undefined ? req.body.careerGoals : user.careerGoals;
-    
     users[userIndex] = user;
-    
     res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
         skills: user.skills,
         careerGoals: user.careerGoals,
-        token: generateToken(user._id), // Issue a new token
+        token: generateToken(user._id),
     });
   } else {
     res.status(404).json({ message: 'User not found' });
   }
 });
 
-// --- Static Frontend Serving ---
-const distPath = path.join(__dirname, '..', 'dist');
-const indexHtmlPath = path.join(distPath, 'index.html');
+module.exports = app;
 
-if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
-  // SPA fallback: let API routes run above this; everything else returns index.html
-  app.get('*', (req, res) => {
-    res.sendFile(indexHtmlPath);
-  });
-}
 
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running in demo mode on port ${PORT}`));

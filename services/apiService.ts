@@ -1,6 +1,6 @@
 import { User, UserAuthResponse } from '../types';
 
-const API_BASE_URL = 'http://localhost:5001/api';
+const API_BASE_URL = '/api';
 
 const handleResponse = async (response: Response) => {
     // Check if the response is JSON before trying to parse it
